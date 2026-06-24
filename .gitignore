@@ -1,0 +1,9 @@
+pgdata/
+*.exe
+*.log
+.DS_Store
+node_modules/
+.next/
+*.sum
+frontend/.next/
+frontend/node_modules/
