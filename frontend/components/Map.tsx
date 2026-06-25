@@ -247,63 +247,76 @@ function StationPanel({ station, onClose }: { station: Station; onClose: () => v
 function StationSearch({ stations, onSelect, placeholder }: { stations: Station[]; onSelect: (s: Station) => void; placeholder?: string }) {
   const [query, setQuery] = useState('')
   const [focused, setFocused] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
+  const [dropStyle, setDropStyle] = useState<React.CSSProperties>({})
+  const inputRef = useRef<HTMLDivElement>(null)
+  const dropRef = useRef<HTMLDivElement>(null)
 
   const filtered = query.trim()
     ? stations.filter(s => s.stop_name.toLowerCase().includes(query.toLowerCase())).slice(0, 8)
     : []
 
   useEffect(() => {
+    if (!focused || !inputRef.current) return
+    const r = inputRef.current.getBoundingClientRect()
+    setDropStyle({
+      position: 'fixed', top: r.bottom + 6, left: r.left, width: r.width, zIndex: 9999,
+    })
+  }, [focused, query])
+
+  useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setFocused(false)
+      if (inputRef.current && !inputRef.current.contains(e.target as Node) &&
+          dropRef.current && !dropRef.current.contains(e.target as Node)) setFocused(false)
     }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
   return (
-    <div ref={ref} style={{ position: 'relative', flex: 1 }}>
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 8,
-        background: 'white', border: focused ? '1.5px solid #2563eb' : '1.5px solid transparent',
-        borderRadius: 10, padding: '0 12px',
-        boxShadow: focused
-          ? '0 4px 20px rgba(37,99,235,.15), 0 1px 3px rgba(0,0,0,.08)'
-          : '0 2px 8px rgba(0,0,0,.08)',
-        transition: 'box-shadow .15s, border .15s',
-      }}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={focused ? '#2563eb' : '#999'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-        <input
-          placeholder={placeholder || 'Search stations...'}
-          value={query}
-          onChange={e => { setQuery(e.target.value); setFocused(true) }}
-          onFocus={() => setFocused(true)}
-          style={{
-            flex: 1, border: 'none', outline: 'none', fontSize: 14, padding: '10px 0',
-            fontFamily: 'system-ui, sans-serif', color: '#1a1a1a',
-            background: 'transparent',
-          }}
-        />
-        {query && (
-          <button
-            onClick={() => setQuery('')}
+    <>
+      <div ref={inputRef} style={{ position: 'relative', flex: 1 }}>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 8,
+          background: 'white', border: focused ? '1.5px solid #2563eb' : '1.5px solid transparent',
+          borderRadius: 10, padding: '0 12px',
+          boxShadow: focused
+            ? '0 4px 20px rgba(37,99,235,.15), 0 1px 3px rgba(0,0,0,.08)'
+            : '0 2px 8px rgba(0,0,0,.08)',
+          transition: 'box-shadow .15s, border .15s',
+        }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={focused ? '#2563eb' : '#999'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            placeholder={placeholder || 'Search stations...'}
+            value={query}
+            onChange={e => { setQuery(e.target.value); setFocused(true) }}
+            onFocus={() => setFocused(true)}
             style={{
-              background: '#e5e7eb', border: 'none', borderRadius: '50%', cursor: 'pointer',
-              width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              padding: 0, flexShrink: 0, color: '#666', fontSize: 12, lineHeight: 1,
+              flex: 1, border: 'none', outline: 'none', fontSize: 14, padding: '10px 0',
+              fontFamily: 'system-ui, sans-serif', color: '#1a1a1a',
+              background: 'transparent',
             }}
-          >✕</button>
-        )}
+          />
+          {query && (
+            <button
+              onClick={() => setQuery('')}
+              style={{
+                background: '#e5e7eb', border: 'none', borderRadius: '50%', cursor: 'pointer',
+                width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                padding: 0, flexShrink: 0, color: '#666', fontSize: 12, lineHeight: 1,
+              }}
+            >✕</button>
+          )}
+        </div>
       </div>
 
       {focused && filtered.length > 0 && (
-        <div style={{
-          position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0,
+        <div ref={dropRef} style={{
+          ...dropStyle,
           background: 'white', borderRadius: 10,
-          boxShadow: '0 8px 30px rgba(0,0,0,.12)', overflow: 'hidden', zIndex: 10,
+          boxShadow: '0 8px 30px rgba(0,0,0,.12)', overflow: 'hidden',
           border: '1px solid #f0f0f0',
         }}>
           {filtered.map(s => {
@@ -339,7 +352,7 @@ function StationSearch({ stations, onSelect, placeholder }: { stations: Station[
           })}
         </div>
       )}
-    </div>
+    </>
   )
 }
 
