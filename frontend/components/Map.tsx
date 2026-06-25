@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useLayoutEffect, useState, useCallback, useRef } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, Polyline, CircleMarker, useMap } from 'react-leaflet'
 import L from 'leaflet'
 
@@ -247,7 +247,7 @@ function StationPanel({ station, onClose }: { station: Station; onClose: () => v
 function StationSearch({ stations, onSelect, placeholder }: { stations: Station[]; onSelect: (s: Station) => void; placeholder?: string }) {
   const [query, setQuery] = useState('')
   const [focused, setFocused] = useState(false)
-  const [dropStyle, setDropStyle] = useState<React.CSSProperties>({})
+  const [dropStyle, setDropStyle] = useState<React.CSSProperties>({ position: 'fixed', zIndex: 9999 })
   const inputRef = useRef<HTMLDivElement>(null)
   const dropRef = useRef<HTMLDivElement>(null)
 
@@ -255,7 +255,7 @@ function StationSearch({ stations, onSelect, placeholder }: { stations: Station[
     ? stations.filter(s => s.stop_name.toLowerCase().includes(query.toLowerCase())).slice(0, 8)
     : []
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!focused || !inputRef.current) return
     const r = inputRef.current.getBoundingClientRect()
     setDropStyle({
