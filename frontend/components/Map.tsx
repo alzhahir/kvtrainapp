@@ -160,6 +160,13 @@ function StationMarkers({ stations, onSelect }: { stations: Station[]; onSelect:
   )
 }
 
+function fmtTime(t: string): string {
+  const [h, m] = t.split(':').map(Number)
+  const ap = h >= 12 ? 'PM' : 'AM'
+  const h12 = h % 12 || 12
+  return `${h12}:${String(m).padStart(2, '0')} ${ap}`
+}
+
 function minsUntil(arrival: string): string {
   const [h, m] = arrival.split(':').map(Number)
   const n = new Date()
@@ -242,7 +249,7 @@ function StationPanel({ station, onClose }: { station: Station; onClose: () => v
                       background: e.route_color ? `#${e.route_color}` : '#666',
                     }} />
                     <span style={{ flex: 1, fontSize: 13, color: '#333' }}>{e.route_name}</span>
-                    <span style={{ fontWeight: 700, fontSize: 14 }}>{e.arrival_time} <span style={{ fontWeight: 400, fontSize: 11, color: '#888' }}>({minsUntil(e.arrival_time)})</span></span>
+                    <span style={{ fontWeight: 700, fontSize: 14 }}>{fmtTime(e.arrival_time)} <span style={{ fontWeight: 400, fontSize: 11, color: '#888' }}>({minsUntil(e.arrival_time)})</span></span>
                   </div>
                 ))}
               </div>
