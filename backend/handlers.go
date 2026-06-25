@@ -220,7 +220,8 @@ func handleStationETA(pool *pgxpool.Pool) http.HandlerFunc {
 			             CAST(split_part(f.end_time,':',2) AS INTEGER) * 60 +
 			             CAST(split_part(f.end_time,':',3) AS INTEGER), 86400) AS end_sec,
 			    f.headway_secs, t.trip_id, t.direction_id,
-			    r.route_id, r.route_long_name, r.route_color
+			    r.route_id, r.route_long_name, r.route_color,
+			    COALESCE(t.trip_headsign, '') AS headsign
 			  FROM stop_times st
 			  JOIN trips t ON st.trip_id = t.trip_id
 			  JOIN routes r ON t.route_id = r.route_id
@@ -233,7 +234,7 @@ func handleStationETA(pool *pgxpool.Pool) http.HandlerFunc {
 			  LPAD(((b.arr_sec + n.n * COALESCE(b.headway_secs, 86400)) / 3600)::text, 2, '0') || ':' ||
 			  LPAD((((b.arr_sec + n.n * COALESCE(b.headway_secs, 86400)) %% 3600) / 60)::text, 2, '0') || ':' ||
 			  LPAD(((b.arr_sec + n.n * COALESCE(b.headway_secs, 86400)) %% 60)::text, 2, '0') AS arrival_time,
-			  b.route_id, b.route_long_name, b.route_color, b.trip_id, b.direction_id
+			  b.route_id, b.route_long_name, b.route_color, b.trip_id, b.direction_id, b.headsign
 			FROM base b, myt
 			CROSS JOIN LATERAL generate_series(0, CASE WHEN b.headway_secs IS NULL THEN 0 ELSE 500 END) n
 			WHERE b.arr_sec + n.n * COALESCE(b.headway_secs, 86400) > myt.sec
@@ -251,7 +252,7 @@ func handleStationETA(pool *pgxpool.Pool) http.HandlerFunc {
 		var etas []ETA
 		for rows.Next() {
 			var e ETA
-			if err := rows.Scan(&e.ArrivalTime, &e.RouteID, &e.RouteName, &e.RouteColor, &e.TripID, &e.DirectionID); err != nil {
+			if err := rows.Scan(&e.ArrivalTime, &e.RouteID, &e.RouteName, &e.RouteColor, &e.TripID, &e.DirectionID, &e.Headsign); err != nil {
 				continue
 			}
 			etas = append(etas, e)

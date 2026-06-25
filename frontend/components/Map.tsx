@@ -28,7 +28,7 @@ type Station = {
 
 type ETA = {
   arrival_time: string; route_id: string; route_name: string
-  route_color: string; trip_id: string; direction_id: number
+  route_color: string; trip_id: string; direction_id: number; headsign: string
 }
 
 type RouteLeg = {
@@ -221,7 +221,7 @@ function StationPanel({ station, onClose }: { station: Station; onClose: () => v
                   fontWeight: 600, fontSize: 13, color: '#555', marginBottom: 6,
                   paddingBottom: 4, borderBottom: '1px solid #eee',
                 }}>
-                  {dir === 0 ? 'Direction A (outbound)' : 'Direction B (inbound)'}
+                  {items[0]?.headsign || (dir === 0 ? 'Direction A' : 'Direction B')}
                 </div>
                 {items.map((e, i) => (
                   <div key={i} style={{
@@ -601,7 +601,7 @@ export function TransitMap() {
 
   return (
     <div style={{ position: 'relative', height: '100%', width: '100%' }}>
-      <div style={{
+      {!selectedStation && <div style={{
         position: 'absolute', top: 12, right: 12,
         zIndex: 1000, display: 'flex', flexDirection: 'column', gap: 8,
         width: 320, maxWidth: 'calc(100vw - 40px)',
@@ -653,7 +653,7 @@ export function TransitMap() {
             onClose={() => setShowRoutePlanner(false)}
           />
         )}
-      </div>
+      </div>}
 
       {highlightRoute && !showRoutePlanner && (
         <div style={{

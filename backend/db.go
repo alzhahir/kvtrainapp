@@ -42,7 +42,8 @@ CREATE TABLE IF NOT EXISTS trips (
     route_id TEXT REFERENCES routes(route_id),
     shape_id TEXT,
     direction_id INTEGER,
-    service_id TEXT
+    service_id TEXT,
+    trip_headsign TEXT
 );
 
 CREATE TABLE IF NOT EXISTS stops (

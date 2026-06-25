@@ -94,6 +94,7 @@ type ETA struct {
 	RouteColor  string `json:"route_color"`
 	TripID      string `json:"trip_id"`
 	DirectionID int    `json:"direction_id"`
+	Headsign    string `json:"headsign"`
 }
 
 type VehicleResponse struct {

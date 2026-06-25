@@ -180,9 +180,9 @@ func importTrips(pool *pgxpool.Pool, f *zip.File) {
 			dir, _ = strconv.Atoi(v)
 		}
 		pool.Exec(context.Background(),
-			`INSERT INTO trips (trip_id, route_id, shape_id, direction_id, service_id)
-			 VALUES ($1,$2,$3,$4,$5) ON CONFLICT (trip_id) DO NOTHING`,
-			r["trip_id"], r["route_id"], r["shape_id"], dir, r["service_id"])
+			`INSERT INTO trips (trip_id, route_id, shape_id, direction_id, service_id, trip_headsign)
+			 VALUES ($1,$2,$3,$4,$5,$6) ON CONFLICT (trip_id) DO NOTHING`,
+			r["trip_id"], r["route_id"], r["shape_id"], dir, r["service_id"], r["trip_headsign"])
 	}
 }
 
