@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sort"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -391,6 +392,17 @@ func findTransferRoutes(ctx context.Context, pool *pgxpool.Pool, fromStop, toSto
 			TransferAt: &xferStop,
 		})
 	}
+	// ponytail: shortest route first by total stop count
+	sort.Slice(results, func(i, j int) bool {
+		totalI, totalJ := 0, 0
+		for _, l := range results[i].Legs {
+			totalI += l.StopsBetween
+		}
+		for _, l := range results[j].Legs {
+			totalJ += l.StopsBetween
+		}
+		return totalI < totalJ
+	})
 	return results
 }
 
@@ -411,7 +423,7 @@ func findNamedTransfers(ctx context.Context, pool *pgxpool.Pool, fromStop, toSto
 	to_route_ids AS (
 	  SELECT DISTINCT t.route_id FROM stop_times st JOIN trips t ON st.trip_id = t.trip_id WHERE st.stop_id = $2
 	)
-	SELECT DISTINCT ON (fr.route_id, tr.route_id)
+	SELECT DISTINCT ON (s.stop_name)
 	  s.stop_id, s.stop_name, s.stop_lat, s.stop_lon,
 	  fr.route_id, r1.route_long_name, r1.route_color,
 	  tr.route_id, r2.route_long_name, r2.route_color
@@ -428,8 +440,7 @@ func findNamedTransfers(ctx context.Context, pool *pgxpool.Pool, fromStop, toSto
 	JOIN stops s ON s.stop_name = fr.stop_name
 	JOIN routes r1 ON fr.route_id = r1.route_id
 	JOIN routes r2 ON tr.route_id = r2.route_id
-	ORDER BY fr.route_id, tr.route_id, s.stop_name
-	LIMIT 5`
+	ORDER BY s.stop_name, fr.route_id, tr.route_id`
 
 	rows, err := pool.Query(ctx, q, fromStop.StopID, toStop.StopID)
 	if err != nil {
