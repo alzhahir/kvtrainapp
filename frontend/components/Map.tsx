@@ -170,7 +170,7 @@ function fmtTime(t: string): string {
 function minsUntil(arrival: string): string {
   const [h, m] = arrival.split(':').map(Number)
   const n = new Date()
-  const myt = new Date(n.getTime() + (8 - n.getTimezoneOffset() / 60) * 3600000)
+  const myt = new Date(n.getTime() + n.getTimezoneOffset() * 60000 + 28800000)
   const d = h * 60 + m - (myt.getHours() * 60 + myt.getMinutes())
   if (d <= 0) return 'now'
   if (d < 60) return `${d} min`
