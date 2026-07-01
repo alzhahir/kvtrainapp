@@ -625,35 +625,39 @@ export function TransitMap() {
         maxHeight: 'calc(100vh - 60px)', overflowY: 'auto',
       }}>
         <div style={{
-          display: 'flex', gap: 2, padding: 3, background: '#f1f3f5', borderRadius: 10,
+          display: 'flex', gap: 2, padding: 3, background: '#f1f3f5cb', borderRadius: 10, position: 'sticky', top: 0, zIndex: 10000, backdropFilter: 'blur(10px)', 
         }}>
           <button
             onClick={() => { setShowRoutePlanner(false); setHighlightRoute(undefined) }}
             style={{
-              padding: '5px 16px', border: 'none', cursor: 'pointer', fontSize: 12,
+              padding: '5px 16px', border: 'none', cursor: 'pointer', fontSize: 12, display: 'flex',
               fontWeight: 600, fontFamily: 'system-ui, sans-serif',
-              borderRadius: 7, letterSpacing: '.02em',
+              borderRadius: 7, letterSpacing: '.02em', flexDirection: 'row', alignItems: 'center',
               background: !showRoutePlanner ? 'white' : 'transparent',
               color: !showRoutePlanner ? '#1a1a1a' : '#888',
               boxShadow: !showRoutePlanner ? '0 1px 3px rgba(0,0,0,.08)' : 'none',
               transition: 'all .15s',
             }}
           >
-            <span style={{ marginRight: 5 }}>🏙</span> Stations
+            <span style={{ marginRight: 5, height: 24 }}>
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill={!showRoutePlanner ? '#1a1a1a' : '#888'}><path d="M80-80v-526q0-85 44-147.5T248-848q54-21 115-26.5t117-5.5q56 0 117 5.5T712-848q80 32 124 94.5T880-606v526H80Zm284-80h230l-60-60H424l-60 60Zm-64-280h360v-160H300v160Zm348.5 128.5Q660-323 660-340t-11.5-28.5Q637-380 620-380t-28.5 11.5Q580-357 580-340t11.5 28.5Q603-300 620-300t28.5-11.5Zm-280 0Q380-323 380-340t-11.5-28.5Q357-380 340-380t-28.5 11.5Q300-357 300-340t11.5 28.5Q323-300 340-300t28.5-11.5ZM160-160h140v-20l42-42q-44-6-73-39.5T240-340v-260q0-78 74.5-99T480-720q100 0 170 21t70 99v260q0 45-29 78.5T618-222l42 42v20h140v-446q0-60-29.5-102.5T682-774q-44-17-97.5-21.5T480-800q-51 0-104.5 4.5T278-774q-59 23-88.5 65.5T160-606v446Zm0 0h640-640Z"/></svg>
+              </span> Stations
           </button>
           <button
             onClick={() => { setShowRoutePlanner(true); setSelectedStation(null) }}
             style={{
-              padding: '5px 16px', border: 'none', cursor: 'pointer', fontSize: 12,
+              padding: '5px 16px', border: 'none', cursor: 'pointer', fontSize: 12, display: 'flex',
               fontWeight: 600, fontFamily: 'system-ui, sans-serif',
-              borderRadius: 7, letterSpacing: '.02em',
+              borderRadius: 7, letterSpacing: '.02em', flexDirection: 'row', alignItems: 'center',
               background: showRoutePlanner ? 'white' : 'transparent',
               color: showRoutePlanner ? '#1a1a1a' : '#888',
               boxShadow: showRoutePlanner ? '0 1px 3px rgba(0,0,0,.08)' : 'none',
               transition: 'all .15s',
             }}
           >
-            <span style={{ marginRight: 5 }}>↔</span> Routes
+            <span style={{ marginRight: 5, height: 24 }}>
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill={showRoutePlanner ? '#1a1a1a' : '#888'}><path d="M247-167q-47-47-47-113v-327q-35-13-57.5-43.5T120-720q0-50 35-85t85-35q50 0 85 35t35 85q0 39-22.5 69.5T280-607v327q0 33 23.5 56.5T360-200q33 0 56.5-23.5T440-280v-400q0-66 47-113t113-47q66 0 113 47t47 113v327q35 13 57.5 43.5T840-240q0 50-35 85t-85 35q-50 0-85-35t-35-85q0-39 22.5-70t57.5-43v-327q0-33-23.5-56.5T600-760q-33 0-56.5 23.5T520-680v400q0 66-47 113t-113 47q-66 0-113-47Zm-7-513q17 0 28.5-11.5T280-720q0-17-11.5-28.5T240-760q-17 0-28.5 11.5T200-720q0 17 11.5 28.5T240-680Zm480 480q17 0 28.5-11.5T760-240q0-17-11.5-28.5T720-280q-17 0-28.5 11.5T680-240q0 17 11.5 28.5T720-200ZM240-720Zm480 480Z"/></svg>
+              </span> Routes
           </button>
         </div>
 
