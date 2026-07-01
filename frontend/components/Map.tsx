@@ -701,7 +701,7 @@ export function TransitMap() {
         </div>
       )}
 
-      <MapContainer center={KL_CENTER} zoom={12} style={{ height: '100%', width: '100%' }}>
+      <MapContainer attributionControl={false} center={KL_CENTER} zoom={12} style={{ height: '100%', width: '100%' }}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; OpenStreetMap contributors"
