@@ -276,7 +276,7 @@ function StationSearch({ stations, onSelect, placeholder }: { stations: Station[
     if (!focused || !inputRef.current) return
     const r = inputRef.current.getBoundingClientRect()
     setDropStyle({
-      position: 'fixed', top: r.bottom + 6, left: r.left, width: r.width, zIndex: 9999,
+      position: 'fixed', top: r.bottom + 6, width: r.width, zIndex: 9999
     })
   }, [focused, query])
 
@@ -291,84 +291,94 @@ function StationSearch({ stations, onSelect, placeholder }: { stations: Station[
 
   return (
     <>
-      <div ref={inputRef} style={{ position: 'relative', flex: 1 }}>
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 8,
-          background: 'white', border: focused ? '1.5px solid #2563eb' : '1.5px solid transparent',
-          borderRadius: 10, padding: '0 12px',
-          boxShadow: focused
-            ? '0 4px 20px rgba(37,99,235,.15), 0 1px 3px rgba(0,0,0,.08)'
-            : '0 2px 8px rgba(0,0,0,.08)',
-          transition: 'box-shadow .15s, border .15s',
-        }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={focused ? '#2563eb' : '#999'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <input
-            placeholder={placeholder || 'Search stations...'}
-            value={query}
-            onChange={e => { setQuery(e.target.value); setFocused(true) }}
-            onFocus={() => setFocused(true)}
-            style={{
-              flex: 1, border: 'none', outline: 'none', fontSize: 14, padding: '10px 0',
-              fontFamily: 'system-ui, sans-serif', color: '#1a1a1a',
-              background: 'transparent',
-            }}
-          />
-          {query && (
-            <button
-              onClick={() => setQuery('')}
+      <div style={{
+        position: 'relative'
+      }}>
+        <div ref={inputRef} style={{ position: 'relative', flex: 1 }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            background: 'white', border: focused ? '1.5px solid #2563eb' : '1.5px solid transparent',
+            borderRadius: 10, padding: '0 12px',
+            boxShadow: focused
+              ? '0 4px 20px rgba(37,99,235,.15), 0 1px 3px rgba(0,0,0,.08)'
+              : '0 2px 8px rgba(0,0,0,.08)',
+            transition: 'box-shadow .15s, border .15s',
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={focused ? '#2563eb' : '#999'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              placeholder={placeholder || 'Search stations...'}
+              value={query}
+              onChange={e => { setQuery(e.target.value); setFocused(true) }}
+              onFocus={() => setFocused(true)}
               style={{
-                background: '#e5e7eb', border: 'none', borderRadius: '50%', cursor: 'pointer',
-                width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                padding: 0, flexShrink: 0, color: '#666', fontSize: 12, lineHeight: 1,
+                flex: 1, border: 'none', outline: 'none', fontSize: 14, padding: '10px 0',
+                fontFamily: 'system-ui, sans-serif', color: '#1a1a1a',
+                background: 'transparent',
               }}
-            >✕</button>
-          )}
-        </div>
-      </div>
-
-      {focused && filtered.length > 0 && (
-        <div ref={dropRef} style={{
-          ...dropStyle,
-          background: 'white', borderRadius: 10,
-          boxShadow: '0 8px 30px rgba(0,0,0,.12)', overflow: 'hidden',
-          border: '1px solid #f0f0f0',
-        }}>
-          {filtered.map(s => {
-            const color = s.route_color ? `#${s.route_color}` : '#999'
-            return (
+            />
+            {query && (
               <button
-                key={s.stop_id}
-                onClick={() => { onSelect(s); setQuery(s.stop_name); setFocused(false) }}
+                onClick={() => setQuery('')}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 10, width: '100%',
-                  padding: '10px 14px', border: 'none', borderBottom: '1px solid #f5f5f5',
-                  textAlign: 'left', cursor: 'pointer', fontSize: 13, background: 'white',
-                  fontFamily: 'system-ui, sans-serif', transition: 'background .1s',
+                  background: '#e5e7eb', border: 'none', borderRadius: '50%', cursor: 'pointer',
+                  width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  padding: 0, flexShrink: 0, color: '#666', fontSize: 12, lineHeight: 1,
                 }}
-                onMouseEnter={e => (e.currentTarget.style.background = '#f8f9ff')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'white')}
-              >
-                <div style={{
-                  width: 10, height: 10, borderRadius: '50%', flexShrink: 0, background: color,
-                  border: `2px solid ${color}33`,
-                }} />
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 600, color: '#1a1a1a', fontSize: 13 }}>{s.stop_name}</div>
-                  {s.route_names.length > 0 && (
-                    <div style={{ color: '#888', fontSize: 11, marginTop: 2 }}>
-                      {s.route_names.slice(0, 2).join(' · ')}
-                    </div>
-                  )}
-                </div>
-                <span style={{ color: '#bbb', fontSize: 11, fontFamily: 'monospace' }}>{s.stop_id}</span>
-              </button>
-            )
-          })}
+              >✕</button>
+            )}
+          </div>
         </div>
-      )}
+
+        {focused && filtered.length > 0 && (
+          <div ref={dropRef} style={{
+            ...dropStyle,
+            background: 'white', borderRadius: 10,
+            boxShadow: '0 8px 30px rgba(0,0,0,.12)',
+            border: '1px solid #f0f0f0',
+          }}>
+            <div style={{
+              maskImage: "linear-gradient(to bottom, transparent 0px, black 30px, black calc(100% - 20px), transparent 100%)",
+              WebkitMaskImage: "linear-gradient(to bottom, transparent 0px, black 30px, black calc(100% - 30px), transparent 100%)",
+              scrollbarWidth: 'none', overflow: 'auto', height: 260, paddingBottom: 5, paddingTop: 5,
+            }}>
+              {filtered.map(s => {
+                const color = s.route_color ? `#${s.route_color}` : '#999'
+                return (
+                  <button
+                    key={s.stop_id}
+                    onClick={() => { onSelect(s); setQuery(s.stop_name); setFocused(false) }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 10, width: '100%',
+                      padding: '10px 14px', border: 'none', borderBottom: '1px solid #f5f5f5',
+                      textAlign: 'left', cursor: 'pointer', fontSize: 13, background: 'white',
+                      fontFamily: 'system-ui, sans-serif', transition: 'background .1s',
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.background = '#f8f9ff')}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'white')}
+                  >
+                    <div style={{
+                      width: 10, height: 10, borderRadius: '50%', flexShrink: 0, background: color,
+                      border: `2px solid ${color}33`,
+                    }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 600, color: '#1a1a1a', fontSize: 13 }}>{s.stop_name}</div>
+                      {s.route_names.length > 0 && (
+                        <div style={{ color: '#888', fontSize: 11, marginTop: 2 }}>
+                          {s.route_names.slice(0, 2).join(' · ')}
+                        </div>
+                      )}
+                    </div>
+                    <span style={{ color: '#bbb', fontSize: 11, fontFamily: 'monospace' }}>{s.stop_id}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
+      </div>
     </>
   )
 }
@@ -410,7 +420,7 @@ function RoutePlanner({ stations, onRouteFound, onClose }: {
     <>
       <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 998, background: 'rgba(0,0,0,.3)' }} />
       <div style={{
-        width: '100%', background: 'white', borderRadius: 12, padding: 16,
+        width: '100%', background: 'rgba(255,255,255,.70)', borderRadius: 12, padding: 16,
         boxShadow: '0 8px 30px rgba(0,0,0,.12)', fontFamily: 'system-ui, sans-serif',
         position: 'relative', zIndex: 999,
       }}>
