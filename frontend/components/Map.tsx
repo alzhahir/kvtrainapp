@@ -414,7 +414,8 @@ function RoutePlanner({ stations, onRouteFound, onClose }: {
     setLoading(false)
   }
 
-  const swap = () => { setFrom(to); setTo(from); setResults(null) }
+  const swap = () => { setFrom(to); setTo(from); setResults(null); setError('') }
+  const ready = from && to
 
   return (
     <>
@@ -441,13 +442,11 @@ function RoutePlanner({ stations, onRouteFound, onClose }: {
               flexShrink: 0, color: '#16a34a', fontSize: 14, fontWeight: 700,
             }}>A</div>
             <StationSearch stations={stations} onSelect={setFrom} placeholder="From..." />
-          </div>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <button onClick={swap} style={{
               width: 28, height: 28, borderRadius: 8, background: '#f1f3f5',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               border: 'none', cursor: 'pointer', flexShrink: 0,
-              fontSize: 14, color: '#666', marginLeft: 0,
+              fontSize: 14, color: '#666',
             }}>⇄</button>
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -460,13 +459,13 @@ function RoutePlanner({ stations, onRouteFound, onClose }: {
           </div>
         </div>
 
-        <button onClick={findRoute} disabled={!from || !to || loading} style={{
+        <button onClick={findRoute} disabled={!ready || loading} style={{
           width: '100%', padding: '10px', border: 'none', borderRadius: 10, marginTop: 12,
-          background: from && to ? '#2563eb' : '#e5e7eb', color: from && to ? 'white' : '#999',
-          fontSize: 14, fontWeight: 600, cursor: from && to ? 'pointer' : 'default',
+          background: ready ? '#2563eb' : '#e5e7eb', color: ready ? 'white' : '#999',
+          fontSize: 14, fontWeight: 600, cursor: ready ? 'pointer' : 'default',
           transition: 'all .15s', letterSpacing: '.01em',
         }}>
-          {loading ? 'Searching...' : from && to ? `Find route from ${from.stop_name} to ${to.stop_name}` : 'Select two stations'}
+          {loading ? 'Searching...' : ready ? `Find route from ${from.stop_name} to ${to.stop_name}` : 'Select two stations'}
         </button>
 
         {error && <div style={{
@@ -529,7 +528,7 @@ function RoutePlanner({ stations, onRouteFound, onClose }: {
                             <span style={{ flex: 1, height: 1, background: '#dbeafe' }} />
                           </div>
                         )}
-                        <div style={{ marginBottom: li < r.legs.length - 1 ? 0 : 0 }}>
+                        <div>
                           <div style={{ fontSize: 11, color: '#888', marginBottom: 4, fontWeight: 600 }}>
                             <span style={{ color: `#${leg.route_color}` }}>●</span> {leg.route_name}
                             <span style={{ fontWeight: 400, color: '#aaa' }}> · {leg.stops?.length} stops</span>
@@ -551,8 +550,7 @@ function RoutePlanner({ stations, onRouteFound, onClose }: {
                                 }}>
                                   {name}
                                   {si === 0 && <span style={{ color: '#888', fontWeight: 400, marginLeft: 4, fontSize: 10 }}>(start)</span>}
-                                  {si === (leg.stops?.length || 0) - 1 && li < r.legs.length - 1 && <span style={{ color: '#2563eb', fontWeight: 400, marginLeft: 4, fontSize: 10 }}>(transfer)</span>}
-                                  {si === (leg.stops?.length || 0) - 1 && li === r.legs.length - 1 && <span style={{ color: '#16a34a', fontWeight: 400, marginLeft: 4, fontSize: 10 }}>(end)</span>}
+                                  {si === (leg.stops?.length || 0) - 1 && <span style={{ color: li < r.legs.length - 1 ? '#2563eb' : '#16a34a', fontWeight: 400, marginLeft: 4, fontSize: 10 }}>({li < r.legs.length - 1 ? 'transfer' : 'end'})</span>}
                                 </div>
                               </div>
                             ))}
