@@ -140,10 +140,30 @@ func handleShapes(pool *pgxpool.Pool) http.HandlerFunc {
 
 		shapes := make([]ShapeResponse, 0, len(shapeMap))
 		for _, s := range shapeMap {
+			s.Points = simplifyPoints(s.Points, 0.0003)
 			shapes = append(shapes, *s)
 		}
 		jsonResponse(w, shapes)
 	}
+}
+
+// ponytail: drop points closer than minDist degrees (~33m). Map zoom never shows detail finer than this.
+func simplifyPoints(pts []ShapePoint, minDist float64) []ShapePoint {
+	if len(pts) < 2 {
+		return pts
+	}
+	r := make([]ShapePoint, 0, len(pts)/10)
+	r = append(r, pts[0])
+	last := pts[0]
+	for _, p := range pts[1:] {
+		dLat := p.Lat - last.Lat
+		dLon := p.Lon - last.Lon
+		if dLat*dLat+dLon*dLon >= minDist*minDist {
+			r = append(r, p)
+			last = p
+		}
+	}
+	return r
 }
 
 func handleStations(pool *pgxpool.Pool) http.HandlerFunc {
