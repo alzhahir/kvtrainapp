@@ -450,10 +450,6 @@ export function TransitMap() {
     setFlyPos([s.stop_lat, s.stop_lon])
   }
 
-  const handleRouteSelect = (routeId: string) => {
-    setHighlightRoute(routeId === highlightRoute ? undefined : routeId)
-  }
-
   return (
     <div style={{ position: 'relative', height: '100%', width: '100%' }}>
       {!selectedStation && <div style={{
