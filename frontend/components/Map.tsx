@@ -263,7 +263,7 @@ function StationPanel({ station, onClose }: { station: Station; onClose: () => v
 function StationSearch({ stations, onSelect, placeholder }: { stations: Station[]; onSelect: (s: Station) => void; placeholder?: string }) {
   const [query, setQuery] = useState('')
   const [focused, setFocused] = useState(false)
-  const [dropStyle, setDropStyle] = useState<React.CSSProperties>({ position: 'fixed', zIndex: 9999 })
+  const [dropStyle, setDropStyle] = useState<React.CSSProperties | null>(null)
   const inputRef = useRef<HTMLDivElement>(null)
   const dropRef = useRef<HTMLDivElement>(null)
 
@@ -275,7 +275,7 @@ function StationSearch({ stations, onSelect, placeholder }: { stations: Station[
     if (!focused || !inputRef.current) return
     const r = inputRef.current.getBoundingClientRect()
     setDropStyle({
-      position: 'fixed', top: r.bottom + 6, width: r.width, zIndex: 9999
+      position: 'fixed', top: r.bottom + 6, left: r.left, width: r.width, zIndex: 9999
     })
   }, [focused, query])
 
@@ -312,7 +312,6 @@ function StationSearch({ stations, onSelect, placeholder }: { stations: Station[
               value={query}
               onChange={e => { setQuery(e.target.value); setFocused(true) }}
               onFocus={() => setFocused(true)}
-              onBlur={() => setFocused(false)}
               style={{
                 flex: 1, border: 'none', outline: 'none', fontSize: 14, padding: '10px 0',
                 fontFamily: 'system-ui, sans-serif', color: '#1a1a1a',
@@ -332,7 +331,7 @@ function StationSearch({ stations, onSelect, placeholder }: { stations: Station[
           </div>
         </div>
 
-        {focused && query.length > 0 && filtered.length > 0 && (
+        {dropStyle && focused && query.length > 0 && filtered.length > 0 && (
           <div ref={dropRef} style={{
             ...dropStyle,
             background: 'rgba(255, 255, 255, 0.8)', borderRadius: 10,
