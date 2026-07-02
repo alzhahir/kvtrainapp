@@ -263,7 +263,7 @@ function StationPanel({ station, onClose }: { station: Station; onClose: () => v
 function StationSearch({ stations, onSelect, placeholder }: { stations: Station[]; onSelect: (s: Station) => void; placeholder?: string }) {
   const [query, setQuery] = useState('')
   const [focused, setFocused] = useState(false)
-  const [dropStyle, setDropStyle] = useState<React.CSSProperties>({ position: 'fixed', zIndex: 9999 })
+  const [dropPos, setDropPos] = useState<{ top: number; left: number; width: number } | null>(null)
   const inputRef = useRef<HTMLDivElement>(null)
   const dropRef = useRef<HTMLDivElement>(null)
 
@@ -273,10 +273,9 @@ function StationSearch({ stations, onSelect, placeholder }: { stations: Station[
 
   useLayoutEffect(() => {
     if (!focused || !inputRef.current) return
+    inputRef.current.scrollIntoView({ block: 'nearest' })
     const r = inputRef.current.getBoundingClientRect()
-    setDropStyle({
-      position: 'fixed', top: r.bottom + 6, left: r.left, width: r.width, zIndex: 9999
-    })
+    setDropPos({ top: r.bottom + 6, left: r.left, width: r.width })
   }, [focused, query])
 
   useEffect(() => {
@@ -331,9 +330,9 @@ function StationSearch({ stations, onSelect, placeholder }: { stations: Station[
           </div>
         </div>
 
-        {focused && query.length > 0 && filtered.length > 0 && (
+        {dropPos && focused && query.length > 0 && filtered.length > 0 && (
           <div ref={dropRef} style={{
-            ...dropStyle,
+            position: 'fixed', top: dropPos.top, left: dropPos.left, width: dropPos.width, zIndex: 9999,
             background: 'rgba(255, 255, 255, 0.8)', borderRadius: 10,
             boxShadow: '0 8px 30px rgba(0,0,0,.12)',
             border: '1px solid #f0f0f0', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
