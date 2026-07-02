@@ -207,9 +207,9 @@ function StationPanel({ station, onClose }: { station: Station; onClose: () => v
       />
       <div style={{
         position: 'fixed', top: 10, right: 10, zIndex: 1000,
-        background: 'white', borderRadius: 10, padding: 16, width: 300,
+        background: 'rgba(255, 255, 255, 0.8)', borderRadius: 10, padding: 16, width: 300,
         boxShadow: '0 4px 16px rgba(0,0,0,.2)', fontFamily: 'system-ui, sans-serif',
-        maxHeight: 'calc(100vh - 40px)', overflowY: 'auto',
+        maxHeight: 'calc(100vh - 40px)', overflowY: 'auto', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
           <div>
@@ -297,8 +297,8 @@ function StationSearch({ stations, onSelect, placeholder }: { stations: Station[
         <div ref={inputRef} style={{ position: 'relative', flex: 1 }}>
           <div style={{
             display: 'flex', alignItems: 'center', gap: 8,
-            background: 'white', border: focused ? '1.5px solid #2563eb' : '1.5px solid transparent',
-            borderRadius: 10, padding: '0 12px',
+            background: focused ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 0.7)', border: focused ? '1.5px solid #2563eb' : '1.5px solid transparent',
+            borderRadius: 10, padding: '0 12px', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
             boxShadow: focused
               ? '0 4px 20px rgba(37,99,235,.15), 0 1px 3px rgba(0,0,0,.08)'
               : '0 2px 8px rgba(0,0,0,.08)',
@@ -313,6 +313,7 @@ function StationSearch({ stations, onSelect, placeholder }: { stations: Station[
               value={query}
               onChange={e => { setQuery(e.target.value); setFocused(true) }}
               onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
               style={{
                 flex: 1, border: 'none', outline: 'none', fontSize: 14, padding: '10px 0',
                 fontFamily: 'system-ui, sans-serif', color: '#1a1a1a',
@@ -332,17 +333,18 @@ function StationSearch({ stations, onSelect, placeholder }: { stations: Station[
           </div>
         </div>
 
-        {focused && filtered.length > 0 && (
+        {query.length > 0 && filtered.length > 0 && (
           <div ref={dropRef} style={{
             ...dropStyle,
-            background: 'white', borderRadius: 10,
+            background: 'rgba(255, 255, 255, 0.8)', borderRadius: 10,
             boxShadow: '0 8px 30px rgba(0,0,0,.12)',
-            border: '1px solid #f0f0f0',
+            border: '1px solid #f0f0f0', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
           }}>
             <div style={{
               maskImage: "linear-gradient(to bottom, transparent 0px, black 30px, black calc(100% - 20px), transparent 100%)",
               WebkitMaskImage: "linear-gradient(to bottom, transparent 0px, black 30px, black calc(100% - 30px), transparent 100%)",
               scrollbarWidth: 'none', overflow: 'auto', height: 260, paddingBottom: 5, paddingTop: 5,
+              background: 'transparent',
             }}>
               {filtered.map(s => {
                 const color = s.route_color ? `#${s.route_color}` : '#999'
@@ -422,7 +424,7 @@ function RoutePlanner({ stations, onRouteFound, onClose }: {
       <div style={{
         width: '100%', background: 'rgba(255,255,255,.70)', borderRadius: 12, padding: 16,
         boxShadow: '0 8px 30px rgba(0,0,0,.12)', fontFamily: 'system-ui, sans-serif',
-        position: 'relative', zIndex: 999,
+        position: 'relative', zIndex: 999, backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
           <span style={{ fontWeight: 700, fontSize: 14, color: '#1a1a1a' }}>Plan a route</span>
